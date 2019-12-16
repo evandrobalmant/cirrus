@@ -1,0 +1,56 @@
+service:
+  name: cirrus
+
+plugins:
+  - '@silvermine/serverless-plugin-cloudfront-lambda-edge'
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+  stage: ${opt:stage, 'dev'}
+  profile: ${file(env.yml):global.AWS_CREDENTIALS_PROFILE}
+  region: ${file(env.yml):global.AWS_PROVIDER_REGION}
+  deploymentBucket: ${file(env.yml):global.DEPLOYMENT_BUCKET}
+  role: lambdaEdgeCustomRole
+
+package:
+  exclude:
+    - 'node_modules/**'
+
+functions:
+  origin-request:
+    handler: handler.originRequest
+    memorySize: 128
+    timeout: 2
+
+resources:
+  Resources:
+    lambdaEdgeCustomRole:
+      Type: AWS::IAM::Role
+      Properties:
+        Path: /lambda-edge/custom/role/
+        RoleName: LambdaEdgeCustomRole-${self:provider.stage}
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+                  - edgelambda.amazonaws.com
+              Action:
+                  - sts:AssumeRole
+        Policies:
+          - PolicyName: LambdaEdgeCustomPolicy-${self:provider.stage}
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - lambda:GetFunction
+                    - lambda:EnableReplication
+                    - iam:CreateServiceLinkedRole
+                    - cloudfront:UpdateDistribution
+                    - cloudwatch:*
+                    # - logs:*
+                  Resource: "*"

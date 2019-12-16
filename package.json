@@ -1,0 +1,15 @@
+{
+  "name": "cirrus",
+  "version": "1.0.0",
+  "description": "Lambda@edge responsável por padronizar urls de request para S3",
+  "main": "handler.js",
+  "scripts": {
+    "deploy:stg": "sls deploy --stage stg",
+    "deploy:prd": "sls deploy --stage prd"
+  },
+  "author": "Evandro Klimpel Balmant",
+  "license": "ISC",
+  "devDependencies": {
+    "@silvermine/serverless-plugin-cloudfront-lambda-edge": "2.1.1"
+  }
+}
