@@ -54,7 +54,7 @@ $ sam local generate-event cloudfront response-generation
 }
 ```
 
-**Police: arn:aws:iam::732780304894:policy/lambdaedge-cirrus-police**
+**Police: arn:aws:iam::99999999:policy/lambdaedge-cirrus-police**
 
 ```
 {
